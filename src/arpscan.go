@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"watchyourlan/models"
 )
 
 func scan_iface(iface string) string {
@@ -17,15 +18,15 @@ func scan_iface(iface string) string {
 	}
 }
 
-func parse_output(text string) []Host {
-	var foundHosts = []Host{}
+func parse_output(text string) []models.Host {
+	var foundHosts []models.Host
 
 	perString := strings.Split(text, "\n")
 	currentTime := time.Now()
 
 	for _, host := range perString {
 		if host != "" {
-			var oneHost Host
+			var oneHost models.Host
 			p := strings.Split(host, "	")
 			oneHost.Ip = p[0]
 			oneHost.Mac = p[1]
@@ -39,9 +40,9 @@ func parse_output(text string) []Host {
 	return foundHosts
 }
 
-func arp_scan() []Host {
-	var foundHosts = []Host{}
-	perString := strings.Split(AppConfig.Iface, " ")
+func arp_scan() []models.Host {
+	var foundHosts []models.Host
+	perString := strings.Split(models.AppConfig.Iface, " ")
 	wg := sync.WaitGroup{}
 	wg.Add(len(perString))
 	arpScanMutex := &sync.Mutex{}

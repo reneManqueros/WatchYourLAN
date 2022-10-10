@@ -1,19 +1,20 @@
 package main
 
 import (
-  "net/http"
-  "html/template"
+	"html/template"
+	"net/http"
+	"watchyourlan/models"
 )
 
 func offline(w http.ResponseWriter, r *http.Request) {
 	type allData struct {
-		Config Conf
-		Hosts []Host
+		Config models.Conf
+		Hosts  []models.Host
 	}
 	var guiData allData
-	guiData.Config = AppConfig
-	guiData.Hosts = []Host{}
-	
+	guiData.Config = models.AppConfig
+	guiData.Hosts = []models.Host{}
+
 	for _, oneHost := range AllHosts {
 		if oneHost.Now == 0 {
 			guiData.Hosts = append(guiData.Hosts, oneHost)
@@ -26,13 +27,13 @@ func offline(w http.ResponseWriter, r *http.Request) {
 
 func online(w http.ResponseWriter, r *http.Request) {
 	type allData struct {
-		Config Conf
-		Hosts []Host
+		Config models.Conf
+		Hosts  []models.Host
 	}
 	var guiData allData
-	guiData.Config = AppConfig
-	guiData.Hosts = []Host{}
-	
+	guiData.Config = models.AppConfig
+	guiData.Hosts = []models.Host{}
+
 	for _, oneHost := range AllHosts {
 		if oneHost.Now == 1 {
 			guiData.Hosts = append(guiData.Hosts, oneHost)

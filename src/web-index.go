@@ -6,15 +6,16 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"watchyourlan/models"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
 	type allData struct {
-		Config Conf
-		Hosts  []Host
+		Config models.Conf
+		Hosts  []models.Host
 	}
 	var guiData allData
-	guiData.Config = AppConfig
+	guiData.Config = models.AppConfig
 	guiData.Hosts = AllHosts
 
 	tmpl, _ := template.ParseFiles("templates/index.html", "templates/header.html", "templates/footer.html")
@@ -40,7 +41,7 @@ func update_host(w http.ResponseWriter, r *http.Request) {
 			if oneHost.Id == uint16(id) {
 				AllHosts[i].Name = name
 				AllHosts[i].Known = known
-				db_update(AllHosts[i])
+				AllHosts[i].Update()
 			}
 		}
 	}
@@ -50,7 +51,7 @@ func update_host(w http.ResponseWriter, r *http.Request) {
 
 func basicAuth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if AppConfig.GuiAuth == "" {
+		if models.AppConfig.GuiAuth == "" {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -58,7 +59,7 @@ func basicAuth(next http.HandlerFunc) http.HandlerFunc {
 		username, password, ok := r.BasicAuth()
 		if ok {
 			userCredentials := fmt.Sprintf(`%s:%s`, username, password)
-			if userCredentials == AppConfig.GuiAuth {
+			if userCredentials == models.AppConfig.GuiAuth {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -71,7 +72,7 @@ func basicAuth(next http.HandlerFunc) http.HandlerFunc {
 
 func webgui() {
 	// fmt.Println(FoundHosts)
-	address := AppConfig.GuiIP + ":" + AppConfig.GuiPort
+	address := models.AppConfig.GuiIP + ":" + models.AppConfig.GuiPort
 
 	log.Println("=================================== ")
 	log.Println(fmt.Sprintf("Web GUI at http://%s", address))

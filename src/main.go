@@ -2,54 +2,31 @@ package main
 
 import (
 	"time"
+	"watchyourlan/models"
 )
 
-type Host struct {
-	Id    uint16
-	Name  string
-	Ip    string
-	Mac   string
-	Hw    string
-	Date  string
-	Known uint16
-	Now   uint16
-}
-
-type Conf struct {
-	Iface    string
-	DbPath   string
-	GuiIP    string
-	GuiPort  string
-	GuiAuth  string
-	ShoutUrl string
-	Theme    string
-	Timeout  int
-}
-
-var AppConfig Conf
-var AllHosts []Host
+var AllHosts models.Hosts
 
 func scan_and_compare() {
-	var foundHosts []Host
-	var dbHosts []Host
+	var foundHosts models.Hosts
+	var dbHosts models.Hosts
 	for { // Endless
 		foundHosts = arp_scan()            // Scan interfaces
-		dbHosts = db_select()              // Select everything from DB
-		db_setnow()                        // Mark hosts in DB as offline
+		dbHosts = models.HostsGetAll()     // Select everything from DB
+		AllHosts.SetLastSeen()             // Mark hosts in DB as offline
 		hosts_compare(foundHosts, dbHosts) // Compare hosts online and in DB
 		// and add them to DB
-		AllHosts = db_select()
-		time.Sleep(time.Duration(AppConfig.Timeout) * time.Second) // Timeout
+		AllHosts = models.HostsGetAll()
+		time.Sleep(time.Duration(models.AppConfig.Timeout) * time.Second) // Timeout
 	}
 }
 
 func main() {
-	AllHosts = []Host{}
-	AppConfig = get_config() // Get config from Defaults, Config file, Env
+	AllHosts = models.Hosts{}
+	models.AppConfig = models.Conf{}
+	models.AppConfig.Get()
 
-	db_create() // Check if DB exists. Create if not
-
+	AllHosts.CreateDBIfNew() // Check if DB exists. Create if not
 	go scan_and_compare()
-
 	webgui() // Start web GUI
 }

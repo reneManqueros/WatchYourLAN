@@ -1,12 +1,23 @@
-package main
+package models
 
-import (
-	"github.com/spf13/viper"
-)
+import "github.com/spf13/viper"
+
+type Conf struct {
+	Iface    string
+	DbPath   string
+	GuiIP    string
+	GuiPort  string
+	GuiAuth  string
+	ShoutUrl string
+	Theme    string
+	Timeout  int
+}
+
+var AppConfig Conf
 
 const configPath = "/data/config"
 
-func get_config() (config Conf) {
+func (c *Conf) Get() {
 	viper.SetDefault("IFACE", "enp1s0")
 	viper.SetDefault("DBPATH", "/data/db.sqlite")
 	viper.SetDefault("GUIIP", "localhost")
@@ -22,19 +33,17 @@ func get_config() (config Conf) {
 
 	viper.AutomaticEnv() // Get ENVIRONMENT variables
 
-	config.Iface = viper.Get("IFACE").(string)
-	config.DbPath = viper.Get("DBPATH").(string)
-	config.GuiIP = viper.Get("GUIIP").(string)
-	config.GuiPort = viper.Get("GUIPORT").(string)
-	config.GuiAuth = viper.Get("GUIAUTH").(string)
-	config.Timeout = viper.GetInt("TIMEOUT")
-	config.ShoutUrl = viper.Get("SHOUTRRR_URL").(string)
-	config.Theme = viper.Get("THEME").(string)
-
-	return config
+	c.Iface = viper.Get("IFACE").(string)
+	c.DbPath = viper.Get("DBPATH").(string)
+	c.GuiIP = viper.Get("GUIIP").(string)
+	c.GuiPort = viper.Get("GUIPORT").(string)
+	c.GuiAuth = viper.Get("GUIAUTH").(string)
+	c.Timeout = viper.GetInt("TIMEOUT")
+	c.ShoutUrl = viper.Get("SHOUTRRR_URL").(string)
+	c.Theme = viper.Get("THEME").(string)
 }
 
-func write_config() {
+func (c *Conf) Set() {
 	viper.SetConfigFile(configPath)
 	viper.SetConfigType("env")
 	viper.Set("THEME", AppConfig.Theme)

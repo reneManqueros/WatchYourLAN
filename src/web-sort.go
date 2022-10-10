@@ -1,16 +1,17 @@
 package main
 
 import (
-  "net/http"
-  "sort"
-  "bytes"
-  "net"
+	"bytes"
+	"net"
+	"net/http"
+	"sort"
+	"watchyourlan/models"
 )
 
 func sort_by_ips(method string) {
 	type ipHost struct {
-		Host Host
-		Ip net.IP
+		Host models.Host
+		Ip   net.IP
 	}
 	toSort := []ipHost{}
 	var oneSort ipHost
@@ -32,7 +33,7 @@ func sort_by_ips(method string) {
 		})
 	}
 
-	AllHosts = []Host{}
+	AllHosts = []models.Host{}
 	for _, oneSort := range toSort {
 		AllHosts = append(AllHosts, oneSort.Host)
 	}
@@ -72,7 +73,7 @@ func sort_hosts(w http.ResponseWriter, r *http.Request) {
 			return AllHosts[i].Known > AllHosts[j].Known
 		})
 	default:
-		AllHosts = db_select()
+		AllHosts = models.HostsGetAll()
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)

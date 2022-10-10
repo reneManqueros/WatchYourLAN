@@ -1,9 +1,10 @@
 package main
 
 import (
-  "net/http"
-  "html"
-  "strings"
+	"html"
+	"net/http"
+	"strings"
+	"watchyourlan/models"
 )
 
 func theme(w http.ResponseWriter, r *http.Request) {
@@ -13,14 +14,14 @@ func theme(w http.ResponseWriter, r *http.Request) {
 		tags := strings.Split(urlString, "/")
 		oneTheme := tags[2]
 
-		AppConfig.Theme = oneTheme
-		write_config()
-	} 
+		models.AppConfig.Theme = oneTheme
+		models.AppConfig.Set()
+	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	AllHosts = db_select()
+	AllHosts = models.HostsGetAll()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
