@@ -5,8 +5,8 @@ before:
     - go mod tidy
     - go generate ./...
 builds:
-  - main: ./src
-  - env:
+  - main: .
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
