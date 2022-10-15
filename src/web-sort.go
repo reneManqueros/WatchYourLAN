@@ -40,9 +40,7 @@ func sort_by_ips(method string) {
 }
 
 func sort_hosts(w http.ResponseWriter, r *http.Request) {
-
 	sort_method := r.FormValue("sort_method")
-
 	switch sort_method {
 	case "name-up":
 		sort.SliceStable(AllHosts, func(i, j int) bool {
@@ -73,7 +71,7 @@ func sort_hosts(w http.ResponseWriter, r *http.Request) {
 			return AllHosts[i].Known > AllHosts[j].Known
 		})
 	default:
-		AllHosts = models.HostsGetAll()
+		AllHosts = models.SelectedProvider.GetAll()
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)

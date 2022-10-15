@@ -22,6 +22,6 @@ func theme(w http.ResponseWriter, r *http.Request) {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	AllHosts = models.HostsGetAll()
+	AllHosts = models.SelectedProvider.GetAll()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -3,14 +3,15 @@ package models
 import "github.com/spf13/viper"
 
 type Conf struct {
-	Iface    string
-	DbPath   string
-	GuiIP    string
-	GuiPort  string
-	GuiAuth  string
-	ShoutUrl string
-	Theme    string
-	Timeout  int
+	DbProvider string
+	Iface      string
+	DbPath     string
+	GuiIP      string
+	GuiPort    string
+	GuiAuth    string
+	ShoutUrl   string
+	Theme      string
+	Timeout    int
 }
 
 var AppConfig Conf
@@ -20,6 +21,7 @@ const configPath = "/data/config"
 func (c *Conf) Get() {
 	viper.SetDefault("IFACE", "enp1s0")
 	viper.SetDefault("DBPATH", "/data/db.sqlite")
+	viper.SetDefault("DBPROVIDER", "sqlite")
 	viper.SetDefault("GUIIP", "localhost")
 	viper.SetDefault("GUIPORT", "8840")
 	viper.SetDefault("GUIAUTH", "")
@@ -41,6 +43,7 @@ func (c *Conf) Get() {
 	c.Timeout = viper.GetInt("TIMEOUT")
 	c.ShoutUrl = viper.Get("SHOUTRRR_URL").(string)
 	c.Theme = viper.Get("THEME").(string)
+	c.DbProvider = viper.Get("DBPROVIDER").(string)
 }
 
 func (c *Conf) Set() {

@@ -7,26 +7,32 @@ import (
 
 var AllHosts models.Hosts
 
-func scan_and_compare() {
+func scanAndCompare() {
 	var foundHosts models.Hosts
 	var dbHosts models.Hosts
-	for { // Endless
-		foundHosts = arp_scan()            // Scan interfaces
-		dbHosts = models.HostsGetAll()     // Select everything from DB
-		AllHosts.SetLastSeen()             // Mark hosts in DB as offline
+	for {
+		foundHosts = arp_scan() // Scan interfaces
+		dbHosts = models.SelectedProvider.GetAll()
+		models.SelectedProvider.SetLastSeen()
 		hosts_compare(foundHosts, dbHosts) // Compare hosts online and in DB
+
 		// and add them to DB
-		AllHosts = models.HostsGetAll()
+		AllHosts = models.SelectedProvider.GetAll()
 		time.Sleep(time.Duration(models.AppConfig.Timeout) * time.Second) // Timeout
 	}
 }
 
 func main() {
+
 	AllHosts = models.Hosts{}
 	models.AppConfig = models.Conf{}
 	models.AppConfig.Get()
 
-	AllHosts.CreateDBIfNew() // Check if DB exists. Create if not
-	go scan_and_compare()
+	models.StorageProviders[models.AppConfig.DbProvider] = models.SQLiteProvider{}
+	models.SelectedProvider = models.StorageProviders[models.AppConfig.DbProvider].Initialize(map[string]interface{}{
+		"dbPath": models.AppConfig.DbPath,
+	}).(models.Storage)
+
+	go scanAndCompare()
 	webgui() // Start web GUI
 }
