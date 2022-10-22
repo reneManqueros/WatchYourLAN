@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 	"watchyourlan/models"
 )
 
@@ -23,22 +22,21 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func update_host(w http.ResponseWriter, r *http.Request) {
-	idStr := r.FormValue("id")
+	id := r.FormValue("id")
 	name := r.FormValue("name")
 	knownStr := r.FormValue("known")
 
-	if idStr == "" {
+	if id == "" {
 		fmt.Fprintf(w, "No data!")
 	} else {
 		var known uint16
-		id, _ := strconv.Atoi(idStr)
 		known = 0
 		if knownStr == "on" {
 			known = 1
 		}
 
 		for i, oneHost := range AllHosts {
-			if oneHost.Id == uint16(id) {
+			if oneHost.Id == id {
 				AllHosts[i].Name = name
 				AllHosts[i].Known = known
 				AllHosts[i].Update()

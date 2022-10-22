@@ -3,15 +3,18 @@ package models
 import "github.com/spf13/viper"
 
 type Conf struct {
-	DbProvider string
-	Iface      string
-	DbPath     string
-	GuiIP      string
-	GuiPort    string
-	GuiAuth    string
-	ShoutUrl   string
-	Theme      string
-	Timeout    int
+	DbProvider           string
+	Iface                string
+	DbPath               string
+	GuiIP                string
+	GuiPort              string
+	GuiAuth              string
+	ShoutUrl             string
+	Theme                string
+	MongoDBConnectionURI string
+	MongoDBDatabase      string
+	MongoDBCollection    string
+	Timeout              int
 }
 
 var AppConfig Conf
@@ -28,6 +31,9 @@ func (c *Conf) Get() {
 	viper.SetDefault("TIMEOUT", "60")
 	viper.SetDefault("SHOUTRRR_URL", "")
 	viper.SetDefault("THEME", "solar")
+	viper.SetDefault("MONGODBCONNECTIONURI", "")
+	viper.SetDefault("MONGODBDATABASE", "")
+	viper.SetDefault("MONGODBCOLLECTION", "")
 
 	viper.SetConfigFile(configPath)
 	viper.SetConfigType("env")
@@ -44,6 +50,9 @@ func (c *Conf) Get() {
 	c.ShoutUrl = viper.Get("SHOUTRRR_URL").(string)
 	c.Theme = viper.Get("THEME").(string)
 	c.DbProvider = viper.Get("DBPROVIDER").(string)
+	c.MongoDBDatabase = viper.Get("MONGODBDATABASE").(string)
+	c.MongoDBConnectionURI = viper.Get("MONGODBCONNECTIONURI").(string)
+	c.MongoDBCollection = viper.Get("MONGODBCOLLECTION").(string)
 }
 
 func (c *Conf) Set() {

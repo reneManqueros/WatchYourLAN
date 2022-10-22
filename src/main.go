@@ -28,9 +28,13 @@ func main() {
 	models.AppConfig = models.Conf{}
 	models.AppConfig.Get()
 
-	models.StorageProviders[models.AppConfig.DbProvider] = models.SQLiteProvider{}
+	models.StorageProviders["sqlite"] = models.SQLiteProvider{}
+	models.StorageProviders["mongodb"] = models.MongoDBProvider{}
 	models.SelectedProvider = models.StorageProviders[models.AppConfig.DbProvider].Initialize(map[string]interface{}{
-		"dbPath": models.AppConfig.DbPath,
+		"dbPath":        models.AppConfig.DbPath,
+		"connectionURI": models.AppConfig.MongoDBConnectionURI,
+		"database":      models.AppConfig.MongoDBDatabase,
+		"collection":    models.AppConfig.MongoDBCollection,
 	}).(models.Storage)
 
 	go scanAndCompare()
