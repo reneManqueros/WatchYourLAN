@@ -1,7 +1,7 @@
 package models
 
 type Host struct {
-	Id    uint16
+	Id    string
 	Name  string
 	Ip    string
 	Mac   string

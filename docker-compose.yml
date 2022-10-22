@@ -1,7 +1,7 @@
 version: "3"
 services:
   wyl:
-    image: aceberg/watchyourlan
+    image: renemanqueros/watchyourlan
     network_mode: "host"        
     restart: unless-stopped
     volumes:
